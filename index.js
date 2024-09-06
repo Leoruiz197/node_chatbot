@@ -6,7 +6,9 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
     const body = req.body;
-    console.log(body)
+    res.json({
+        fulfillmentText: `Você disse: ${queryText}`
+    });
     if (body.callback_query) {
         const callbackData = body.callback_query.data;
 
