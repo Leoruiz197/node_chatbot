@@ -6,29 +6,46 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
     const body = req.body;
-    res.json({
-        fulfillmentText: `Você disse: ${queryText}`
-    });
+
+    // Verifica se é uma callback_query do Telegram
     if (body.callback_query) {
         const callbackData = body.callback_query.data;
+        const chatId = body.callback_query.message.chat.id;
+        const callbackId = body.callback_query.id;
 
-        // Verifica o callback_data e dispara intents correspondentes
+        // Responde à callback_query para evitar reiniciar o bot
+        res.json({
+            method: "answerCallbackQuery",
+            callback_query_id: callbackId
+        });
+
+        // Enviar resposta de mensagem com base no callback_data
         if (callbackData === 'opcao_1') {
+            // Envia uma mensagem para o chat com a opção escolhida
             res.json({
-                fulfillmentText: "Você escolheu a Opção 1!"
+                method: 'sendMessage',
+                chat_id: chatId,
+                text: "Você escolheu a Opção 1!"
             });
         } else if (callbackData === 'opcao_2') {
+            // Envia uma mensagem para o chat com a opção escolhida
             res.json({
-                fulfillmentText: "Você escolheu a Opção 2!"
+                method: 'sendMessage',
+                chat_id: chatId,
+                text: "Você escolheu a Opção 2!"
             });
         } else {
             res.json({
-                fulfillmentText: "Opção desconhecida."
+                method: 'sendMessage',
+                chat_id: chatId,
+                text: "Opção desconhecida."
             });
         }
     } else {
+        // Caso não seja uma callback_query, retorna o esperado pelo Dialogflow
+        const queryResult = body.queryResult;
         res.json({
-            fulfillmentText: "Nenhuma ação tomada."
+            fulfillmentText: `Você disse: ${queryResult.queryText}`
         });
     }
 });
