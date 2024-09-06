@@ -18,7 +18,7 @@ app.post('/webhook', (req, res) => {
             method: "answerCallbackQuery",
             callback_query_id: callbackId
         });
-        if (callbackData === 'Fazer pedido') {
+        if (body.queryResult.queryText === 'Fazer pedido') {
             // Envia uma mensagem para o chat com a opção escolhida
             res.json({
                 method: 'sendMessage',
